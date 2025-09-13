@@ -1,10 +1,22 @@
 using Microsoft.Xna.Framework;
 using System;
+// Zamanu 
+// Umar Zaman - Lab 1 
+
+/*
+ * AI Tool Citation:
+ * Cursor. (2025). Cursor AI (September 12 version) [AI-powered code editor]. https://cursor.sh/
+ * 
+ * This code was generated with assistance from Cursor AI to implement console applications
+ * for vector and matrix operations as part of Sheridan Game Tools Lab 1.
+ */
 
 namespace lab1;
 
 class ConsoleTasks
 {
+    // The following code was generated on September 12, 2025, by Cursor AI software (Cursor, 2025), 
+    // to implement the main menu loop for console tasks in response to the prompt "create a console application menu system"
     static void Main(string[] args)
     {
         Console.WriteLine("=== Sheridan Game Tools Lab - Console Tasks ===");
@@ -18,10 +30,9 @@ class ConsoleTasks
             Console.WriteLine("2. Vectors - Task 2 (Triangle Calculator)");
             Console.WriteLine("3. Vectors - Task 3 (Cuboid Constructor)");
             Console.WriteLine("4. Matrices - Task 1 (Custom Matrix Operations)");
-            Console.WriteLine("5. Vector Math Demo");
             Console.WriteLine("0. Exit");
             Console.WriteLine();
-            Console.Write("Enter your choice (0-5): ");
+            Console.Write("Enter your choice (0-4): ");
             
             string choice = Console.ReadLine();
             Console.WriteLine();
@@ -42,17 +53,13 @@ class ConsoleTasks
             {
                 RunMatricesTask1();
             }
-            else if (choice == "5")
-            {
-                RunVectorMathDemo();
-            }
             else if (choice == "0")
             {
                 break;
             }
             else
             {
-                Console.WriteLine("Invalid choice. Please try again.");
+                Console.WriteLine("Invalid choice. Please enter a number between 0 and 4.");
             }
             
             Console.WriteLine();
@@ -62,6 +69,8 @@ class ConsoleTasks
         }
     }
     
+    // The following code was generated on September 12, 2025, by Cursor AI software (Cursor, 2025),
+    // to implement Vectors Task 1 movement calculator in response to the prompt "create a movement calculator using Vector3"
     static void RunVectorsTask1()
     {
         Console.WriteLine("=== Vectors Task 1 - Movement Calculator ===");
@@ -98,6 +107,8 @@ class ConsoleTasks
         Console.WriteLine($"Steps needed: {steps}");
     }
     
+    // The following code was generated on September 12, 2025, by Cursor AI software (Cursor, 2025),
+    // to implement Vectors Task 2 triangle calculator in response to the prompt "create a triangle perimeter and area calculator using Vector3"
     static void RunVectorsTask2()
     {
         Console.WriteLine("=== Vectors Task 2 - Triangle Calculator ===");
@@ -145,6 +156,8 @@ class ConsoleTasks
         Console.WriteLine($"Area: {area:F2} square units");
     }
     
+    // The following code was generated on September 12, 2025, by Cursor AI software (Cursor, 2025),
+    // to implement Vectors Task 3 cuboid constructor in response to the prompt "create a 3D cuboid constructor using Vector3 points"
     static void RunVectorsTask3()
     {
         Console.WriteLine("=== Vectors Task 3 - Cuboid Constructor ===");
@@ -196,6 +209,8 @@ class ConsoleTasks
         Console.WriteLine($"- Volume: {volume:F2} cubic units");
     }
     
+    // The following code was generated on September 12, 2025, by Cursor AI software (Cursor, 2025),
+    // to implement Matrices Task 1 custom matrix operations in response to the prompt "create a custom Matrix class with addition, subtraction, and multiplication"
     static void RunMatricesTask1()
     {
         Console.WriteLine("=== Matrices Task 1 - Custom Matrix Operations ===");
@@ -272,78 +287,6 @@ class ConsoleTasks
         }
     }
     
-    static void RunVectorMathDemo()
-    {
-        Console.WriteLine("Vector Math Test");
-        Console.WriteLine("================");
-        
-        Console.WriteLine("\n--- Vector Addition ---");
-        AddVectors();
-        
-        Console.WriteLine("\n--- Vector Subtraction ---");
-        SubtractVectors();
-        
-        Console.WriteLine("\n--- Vector Movement ---");
-        MultiplyVector();
-        
-        Console.WriteLine("\n--- Distance Calculation ---");
-        CalculateDistance();
-        
-        Console.WriteLine("\n--- Dot Product ---");
-        DotProduct();
-        
-        Console.WriteLine("\n--- Cross Product ---");
-        CrossProduct();
-    }
-    
-    static void AddVectors()
-    {
-        Vector2 a = new Vector2(3, 5);
-        Vector2 b = new Vector2(2, -1);
-        Vector2 c = a + b;
-        Console.WriteLine($"Vector a {a} + b {b} = {c}");
-    }
-    
-    static void SubtractVectors()
-    {
-        Vector3 a = new Vector3(1, 2, 3);
-        Vector3 b = new Vector3(4, 5, 6);
-        Vector3 c = a - b;
-        Console.WriteLine($"Vector a {a} - b {b} = {c}");
-    }
-    
-    static void MultiplyVector()
-    {
-        Vector3 pos = new Vector3(10, 10, 10);
-        Vector3 dir = new Vector3(1, 0, 0);
-        float speed = 5.0f;
-        pos += dir * speed;
-        Console.WriteLine($"Position after movement: {pos}");
-    }
-    
-    static void CalculateDistance()
-    {
-        Vector3 point1 = new Vector3(0, 0, 0);
-        Vector3 point2 = new Vector3(3, 4, 0);
-        float distance = Vector3.Distance(point1, point2);
-        Console.WriteLine($"Distance between {point1} and {point2} = {distance:F2}");
-    }
-    
-    static void DotProduct()
-    {
-        Vector3 a = new Vector3(1, 2, 3);
-        Vector3 b = new Vector3(4, 5, 6);
-        float dot = Vector3.Dot(a, b);
-        Console.WriteLine($"Dot product of {a} and {b} = {dot}");
-    }
-    
-    static void CrossProduct()
-    {
-        Vector3 a = new Vector3(1, 0, 0);
-        Vector3 b = new Vector3(0, 1, 0);
-        Vector3 cross = Vector3.Cross(a, b);
-        Console.WriteLine($"Cross product of {a} and {b} = {cross}");
-    }
     
     static void PrintMatrix(float[,] matrix, int rows, int cols)
     {
