@@ -15,8 +15,11 @@ public class Game1 : Game
     // Used to store vertex data
     VertexBuffer m_vertexBuffer;
     
-    // Task 2: Current primitive type
-    private PrimitiveType m_currentPrimitiveType = PrimitiveType.LineList;
+    // Used to store index data
+    IndexBuffer m_indexBuffer;
+    
+    // Task 3: Icosahedron rotation
+    private float m_rotationY = 0f;
     
     // Matrices used for rendering
     private Matrix m_world = Matrix.Identity;
@@ -49,8 +52,9 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
-        // Create simple vertices for Task 2 primitives
+        // Create icosahedron vertices and indices for Task 3
         CreateVertices();
+        CreateIndices();
         _spriteBatch = new SpriteBatch(GraphicsDevice);
     }
 
@@ -59,31 +63,18 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        // Cycle through primitive types with spacebar
-        if (Keyboard.GetState().IsKeyDown(Keys.Space))
-        {
-            switch (m_currentPrimitiveType)
-            {
-                case PrimitiveType.LineList:
-                    m_currentPrimitiveType = PrimitiveType.LineStrip;
-                    break;
-                case PrimitiveType.LineStrip:
-                    m_currentPrimitiveType = PrimitiveType.TriangleList;
-                    break;
-                case PrimitiveType.TriangleList:
-                    m_currentPrimitiveType = PrimitiveType.TriangleStrip;
-                    break;
-                case PrimitiveType.TriangleStrip:
-                    m_currentPrimitiveType = PrimitiveType.LineList;
-                    break;
-            }
-        }
+        // Task 3: Rotate icosahedron around Y-axis
+        m_rotationY += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
+        // Task 3: Update world matrix with position and rotation
+        m_world = Matrix.CreateTranslation(new Vector3(0.5f, 0.5f, 0.5f)) * 
+                  Matrix.CreateRotationY(m_rotationY);
+        
         // Configure BasicEffect
         m_basicEffect.World = m_world;
         m_basicEffect.View = m_view;
@@ -93,34 +84,17 @@ public class Game1 : Game
         // Clear screen
         GraphicsDevice.Clear(Color.Black);
         
-        // Bind vertex buffer
+        // Bind vertex and index buffers
         GraphicsDevice.SetVertexBuffer(m_vertexBuffer);
+        GraphicsDevice.Indices = m_indexBuffer;
 
-        // Render current primitive type
+        // Render icosahedron with index buffer
         foreach (EffectPass pass in m_basicEffect.CurrentTechnique.Passes)
         {
             pass.Apply();
             
-            // Draw based on current primitive type
-            switch (m_currentPrimitiveType)
-            {
-                case PrimitiveType.LineList:
-                    // Draw individual lines
-                    GraphicsDevice.DrawPrimitives(PrimitiveType.LineList, 0, 2);
-                    break;
-                case PrimitiveType.LineStrip:
-                    // Draw connected lines
-                    GraphicsDevice.DrawPrimitives(PrimitiveType.LineStrip, 0, 3);
-                    break;
-                case PrimitiveType.TriangleList:
-                    // Draw individual triangles
-                    GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
-                    break;
-                case PrimitiveType.TriangleStrip:
-                    // Draw connected triangles
-                    GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-                    break;
-            }
+            // Draw icosahedron using indexed primitives
+            GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 20);
         }
 
         base.Draw(gameTime);
@@ -128,22 +102,55 @@ public class Game1 : Game
 
     private void CreateVertices()
     {
-        // Simple vertices for demonstrating different primitive types
-        VertexPositionColor[] vertices = new VertexPositionColor[6];
+        // Task 3: Icosahedron vertices (12 vertices with colors)
+        VertexPositionColor[] vertices = new VertexPositionColor[12];
 
-        // Line vertices
-        vertices[0] = new VertexPositionColor(new Vector3(-1, 0, 0), Color.Red);
-        vertices[1] = new VertexPositionColor(new Vector3(1, 0, 0), Color.Red);
-        
-        // Line strip vertices
-        vertices[2] = new VertexPositionColor(new Vector3(-0.5f, 0.5f, 0), Color.Green);
-        vertices[3] = new VertexPositionColor(new Vector3(0, 1, 0), Color.Green);
-        vertices[4] = new VertexPositionColor(new Vector3(0.5f, 0.5f, 0), Color.Green);
-        
-        // Triangle vertex
-        vertices[5] = new VertexPositionColor(new Vector3(0, -0.5f, 0), Color.Blue);
+        // Icosahedron vertex positions and colors
+        vertices[0] = new VertexPositionColor(new Vector3(-0.26286500f, 0.0000000f, 0.42532500f), Color.Red);
+        vertices[1] = new VertexPositionColor(new Vector3(0.26286500f, 0.0000000f, 0.42532500f), Color.Orange);
+        vertices[2] = new VertexPositionColor(new Vector3(-0.26286500f, 0.0000000f, -0.42532500f), Color.Yellow);
+        vertices[3] = new VertexPositionColor(new Vector3(0.26286500f, 0.0000000f, -0.42532500f), Color.Green);
+        vertices[4] = new VertexPositionColor(new Vector3(0.0000000f, 0.42532500f, 0.26286500f), Color.Blue);
+        vertices[5] = new VertexPositionColor(new Vector3(0.0000000f, 0.42532500f, -0.26286500f), Color.Indigo);
+        vertices[6] = new VertexPositionColor(new Vector3(0.0000000f, -0.42532500f, 0.26286500f), Color.Purple);
+        vertices[7] = new VertexPositionColor(new Vector3(0.0000000f, -0.42532500f, -0.26286500f), Color.White);
+        vertices[8] = new VertexPositionColor(new Vector3(0.42532500f, 0.26286500f, 0.0000000f), Color.Cyan);
+        vertices[9] = new VertexPositionColor(new Vector3(-0.42532500f, 0.26286500f, 0.0000000f), Color.Black);
+        vertices[10] = new VertexPositionColor(new Vector3(0.42532500f, -0.26286500f, 0.0000000f), Color.DodgerBlue);
+        vertices[11] = new VertexPositionColor(new Vector3(-0.42532500f, -0.26286500f, 0.0000000f), Color.Crimson);
 
-        m_vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 6, BufferUsage.WriteOnly);
+        m_vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 12, BufferUsage.WriteOnly);
         m_vertexBuffer.SetData<VertexPositionColor>(vertices);
+    }
+
+    private void CreateIndices()
+    {
+        // Task 3: Icosahedron indices (60 indices for 20 triangles)
+        short[] indices = new short[60];
+
+        // Define icosahedron triangular faces
+        indices[0] = 0; indices[1] = 6; indices[2] = 1;
+        indices[3] = 0; indices[4] = 11; indices[5] = 6;
+        indices[6] = 1; indices[7] = 4; indices[8] = 0;
+        indices[9] = 1; indices[10] = 8; indices[11] = 4;
+        indices[12] = 1; indices[13] = 10; indices[14] = 8;
+        indices[15] = 2; indices[16] = 5; indices[17] = 3;
+        indices[18] = 2; indices[19] = 9; indices[20] = 5;
+        indices[21] = 2; indices[22] = 11; indices[23] = 9;
+        indices[24] = 3; indices[25] = 7; indices[26] = 2;
+        indices[27] = 3; indices[28] = 10; indices[29] = 7;
+        indices[30] = 4; indices[31] = 8; indices[32] = 5;
+        indices[33] = 4; indices[34] = 9; indices[35] = 0;
+        indices[36] = 5; indices[37] = 8; indices[38] = 3;
+        indices[39] = 5; indices[40] = 9; indices[41] = 4;
+        indices[42] = 6; indices[43] = 10; indices[44] = 1;
+        indices[45] = 6; indices[46] = 11; indices[47] = 7;
+        indices[48] = 7; indices[49] = 10; indices[50] = 6;
+        indices[51] = 7; indices[52] = 11; indices[53] = 2;
+        indices[54] = 8; indices[55] = 10; indices[56] = 3;
+        indices[57] = 9; indices[58] = 11; indices[59] = 0;
+
+        m_indexBuffer = new IndexBuffer(GraphicsDevice, typeof(short), indices.Length, BufferUsage.WriteOnly);
+        m_indexBuffer.SetData(indices);
     }
 }
