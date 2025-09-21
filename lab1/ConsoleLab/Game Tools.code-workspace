@@ -1,0 +1,19 @@
+{
+  "folders": [
+	{
+		"path": "../.."
+	},
+	{
+		"path": "../../../../../Downloads/Editor2025"
+	}
+],
+  "settings": {
+    "files.associations": {
+      "*.csproj": "xml",
+      "*.sln": "plaintext"
+    },
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "workbench.colorTheme": "Default Dark+",
+    "git.confirmSync": false
+  }
+}
