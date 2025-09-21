@@ -13,3 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
+# Note: MyShader.fx removed from build due to Wine compilation issue on macOS
+# The shader file exists for educational purposes but cannot be compiled
+# All shader concepts are demonstrated in the C# code instead
+
