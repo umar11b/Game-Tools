@@ -1,4 +1,20 @@
-﻿using Microsoft.Xna.Framework;
+﻿/*
+ * Lab 2 - Shaders, HLSL, Fonts and Texturing
+ * Game Development Tools Course
+ * 
+ * Developed with assistance from Cursor AI
+ * AI-powered code generation and debugging support provided by Cursor IDE
+ * https://cursor.sh/
+ * 
+ * Cursor AI assisted with:
+ * - MonoGame project setup and configuration
+ * - Shader concept implementation and HLSL code structure
+ * - Vertex buffer and primitive type implementations
+ * - Cross-platform compatibility solutions for macOS
+ * - Code optimization and debugging
+ */
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -187,6 +203,10 @@ public class Game1 : Game
      * TASK 4: SHADER CONCEPTS DEMONSTRATION
      * 
      * This implementation follows the exact pattern from the slides example:
+     * 
+     * AI-Assisted Development:
+     * Shader concepts and HLSL structure implemented with guidance from Cursor AI
+     * https://cursor.sh/ - AI-powered code generation and educational support
      * 
      * 1. PREPROCESSOR DIRECTIVES (from MyShader.fx):
      *    #if OPENGL

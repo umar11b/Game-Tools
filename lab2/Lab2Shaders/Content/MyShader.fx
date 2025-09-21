@@ -1,3 +1,17 @@
+/*
+ * MyShader.fx - Custom HLSL Shader for Lab 2 Task 4
+ * 
+ * Developed with assistance from Cursor AI
+ * AI-powered shader code generation and HLSL structure guidance
+ * https://cursor.sh/
+ * 
+ * Cursor AI provided:
+ * - HLSL syntax and structure guidance
+ * - Shader model compatibility solutions
+ * - Cross-platform preprocessor directives
+ * - Educational shader concept explanations
+ */
+
 #if OPENGL
 #define SV_POSITION POSITION
 #define VS_SHADERMODEL vs_3_0
