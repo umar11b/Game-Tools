@@ -7,7 +7,7 @@ namespace EditorAvalonia;
 
 public partial class MainWindow : Window
 {
-    public GameEditor Game { get; set; }
+    public GameEditor? Game { get; set; }
     
     public MainWindow()
     {
@@ -16,29 +16,29 @@ public partial class MainWindow : Window
     }
     
     // Event handlers (following slide example)
-    private void SaveGame_Click(object sender, RoutedEventArgs e)
-    {
-        Game?.SaveGame();
-        StatusLabel.Text = "Toolstrip - Game Saved";
-    }
+        private void SaveGame_Click(object sender, RoutedEventArgs e)
+        {
+            Game?.SaveGame();
+            StatusLabel.Text = "Game Saved";
+        }
     
         private void LoadGame_Click(object sender, RoutedEventArgs e)
         {
             Game?.LoadGame();
-            StatusLabel.Text = "Toolstrip - Game Loaded";
+            StatusLabel.Text = "Game Loaded";
         }
 
         private async void CreateProject_Click(object sender, RoutedEventArgs e)
         {
             // Following slide example exactly - Create new project using modern Avalonia API
-            var storageProvider = this.GetStorageProvider();
-            var file = await storageProvider.SaveFilePickerAsync(new Avalonia.Platform.Storage.FilePickerSaveOptions
+            var storageProvider = this.StorageProvider;
+            var file = await storageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
                 Title = "Create New Project",
                 DefaultExtension = "oce",
                 FileTypeChoices = new[]
                 {
-                    new Avalonia.Platform.Storage.FilePickerFileType("Our Cool Editor Project")
+                    new FilePickerFileType("Our Cool Editor Project")
                     {
                         Patterns = new[] { "*.oce" }
                     }
@@ -53,10 +53,10 @@ public partial class MainWindow : Window
                     fileName += ".oce";
                 }
                 
-                Game.Project = new Project(Game.Content, fileName);
-                Title = "Our Cool Editor - " + Game.Project.Name;
+                Game!.Project = new Project(Game.Content, fileName);
+                Title = "Our Cool Editor - " + Game.Project?.Name;
                 Game.AdjustAspectRatio();
-                StatusLabel.Text = "Toolstrip - New Project Created";
+                StatusLabel.Text = "New Project Created";
             }
         }
     

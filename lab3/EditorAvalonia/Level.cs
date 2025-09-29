@@ -123,7 +123,7 @@ namespace EditorAvalonia
             
             // Create a simple model using proper constructors
             var meshParts = new List<ModelMeshPart>();
-            var meshPart = new ModelMeshPart(graphicsDevice);
+            var meshPart = new ModelMeshPart();
             
             meshPart.VertexBuffer = vertexBuffer;
             meshPart.IndexBuffer = indexBuffer;

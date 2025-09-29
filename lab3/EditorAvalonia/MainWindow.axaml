@@ -7,53 +7,66 @@
         Title="Our Cool Editor">
     
     <DockPanel>
-            <!-- Menu Strip (following slide example) -->
-            <Menu DockPanel.Dock="Top">
-                <MenuItem Header="File">
-                    <MenuItem Header="Create" Click="CreateProject_Click"/>
-                    <Separator/>
-                    <MenuItem Header="Save" Click="SaveGame_Click"/>
-                    <MenuItem Header="Load" Click="LoadGame_Click"/>
-                    <Separator/>
-                    <MenuItem Header="Exit" Click="Exit_Click"/>
-                </MenuItem>
-            </Menu>
+        <!-- Menu Strip -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Create" Click="CreateProject_Click"/>
+                <Separator/>
+                <MenuItem Header="Save" Click="SaveGame_Click"/>
+                <MenuItem Header="Load" Click="LoadGame_Click"/>
+                <Separator/>
+                <MenuItem Header="Exit" Click="Exit_Click"/>
+            </MenuItem>
+        </Menu>
         
-        <!-- Main Content Area (Split Container equivalent) -->
+        <!-- Status Strip at the very bottom -->
+        <Border DockPanel.Dock="Bottom" Background="#F0F0F0" Height="22" BorderBrush="Gray" BorderThickness="0,1,0,0">
+            <TextBlock Text="Ready" Name="StatusLabel" 
+                      HorizontalAlignment="Left" 
+                      VerticalAlignment="Center" 
+                      Margin="8,0,0,0"
+                      FontSize="11"
+                      Foreground="Black"/>
+        </Border>
+        
+        <!-- Main Content Area -->
         <Grid SizeChanged="MainWindow_SizeChanged">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             
-            <!-- Panel 1 - Game View -->
-            <Border Grid.Column="0" Background="CornflowerBlue" Margin="5" SizeChanged="Panel1_SizeChanged">
+            <!-- Game View Panel -->
+            <Border Grid.Column="0" Background="CornflowerBlue" Margin="0" SizeChanged="Panel1_SizeChanged">
                 <TextBlock Text="Game View" 
                           HorizontalAlignment="Center" 
                           VerticalAlignment="Center"
                           Foreground="White"
-                          FontSize="16"/>
+                          FontSize="18"
+                          FontWeight="Bold"/>
             </Border>
             
             <!-- Splitter -->
-            <GridSplitter Grid.Column="1" Width="5" Background="Gray"/>
+            <GridSplitter Grid.Column="1" Width="3" Background="#CCCCCC" HorizontalAlignment="Stretch"/>
             
-            <!-- Panel 2 - Properties/Inspector -->
-            <Border Grid.Column="2" Background="LightGray" Margin="5">
-                <TextBlock Text="Properties Panel" 
-                          HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          FontSize="16"/>
+            <!-- Properties Panel -->
+            <Border Grid.Column="2" Background="#F5F5F5" Margin="0" BorderBrush="#DDDDDD" BorderThickness="1,0,0,0">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Properties" 
+                              HorizontalAlignment="Center" 
+                              VerticalAlignment="Center"
+                              FontSize="16"
+                              FontWeight="Bold"
+                              Foreground="#333333"/>
+                    <TextBlock Text="Inspector Panel" 
+                              HorizontalAlignment="Center" 
+                              VerticalAlignment="Center"
+                              FontSize="12"
+                              Foreground="#666666"
+                              Margin="0,5,0,0"/>
+                </StackPanel>
             </Border>
         </Grid>
-        
-        <!-- Status Strip (following slide example) -->
-        <Border DockPanel.Dock="Bottom" Background="LightGray" Height="25">
-            <TextBlock Text="Toolstrip - Ready" Name="StatusLabel" 
-                      HorizontalAlignment="Left" 
-                      VerticalAlignment="Center" 
-                      Margin="5,0"/>
-        </Border>
     </DockPanel>
 </Window>

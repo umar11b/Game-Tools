@@ -23,9 +23,9 @@ namespace EditorAvalonia
     class Models : ISerializable
     {
         // Accessors (following slide example)
-        public Model Mesh { get; set; }
-        public Texture Texture { get; set; }
-        public Effect Shader { get; set; }
+        public Model? Mesh { get; set; }
+        public Texture? Texture { get; set; }
+        public Effect? Shader { get; set; }
         public Vector3 Position { get => m_position; set { m_position = value; } }
         public Vector3 Rotation { get => m_rotation; set { m_rotation = value; } }
         public float Scale { get; set; }
@@ -60,11 +60,14 @@ namespace EditorAvalonia
         public void SetShader(Effect _effect)
         {
             Shader = _effect;
-            foreach (ModelMesh mesh in Mesh.Meshes)
+            if (Mesh != null)
             {
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                foreach (ModelMesh mesh in Mesh.Meshes)
                 {
-                    meshPart.Effect = Shader;
+                    foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                    {
+                        meshPart.Effect = Shader;
+                    }
                 }
             }
         }
@@ -78,6 +81,8 @@ namespace EditorAvalonia
 
         public void Render(Matrix _view, Matrix _projection)
         {
+            if (Shader == null || Mesh == null) return;
+
             // Handle BasicEffect vs custom shader
             if (Shader is BasicEffect basicEffect)
             {
@@ -102,9 +107,9 @@ namespace EditorAvalonia
 
         public void Serialize(BinaryWriter _stream)
         {
-            _stream.Write(Mesh.Tag.ToString());
-            _stream.Write(Texture.Tag.ToString());
-            _stream.Write(Shader.Tag.ToString());
+            _stream.Write(Mesh?.Tag?.ToString() ?? "Unknown");
+            _stream.Write(Texture?.Tag?.ToString() ?? "Unknown");
+            _stream.Write(Shader?.Tag?.ToString() ?? "Unknown");
             HelpSerialize.Vec3(_stream, Position);
             HelpSerialize.Vec3(_stream, Rotation);
             _stream.Write(Scale);
