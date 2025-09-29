@@ -1,0 +1,98 @@
+/*
+ * Lab 3 - Project.cs
+ * Game Development Tools Course
+ * 
+ * Developed with assistance from Cursor AI
+ * AI-powered project and level management for MonoGame editor
+ * https://cursor.sh/
+ * 
+ * Cursor AI assisted with:
+ * - Project class structure and properties
+ * - Level management within a project
+ * - ContentManager integration for project-wide asset loading
+ * - Serialization logic for project state
+ */
+
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.IO;
+
+namespace EditorImGui
+{
+    internal class Project : ISerializable
+    {
+        // Accessors (following slide example)
+        public Level CurrentLevel { get; private set; } = null!;
+        public List<Level> Levels { get; private set; } = new();
+        public string Folder { get; private set; } = string.Empty;
+        public string Name { get; private set; } = string.Empty;
+
+        // Constructor (following slide example)
+        public Project()
+        {
+        }
+
+        public Project(ContentManager _content, string _name)
+        {
+            Folder = Path.GetDirectoryName(_name) ?? string.Empty;
+            Name = Path.GetFileName(_name);
+            
+            if (!Name.ToLower().EndsWith(".oce"))
+            {
+                Name += ".oce";
+            }
+            // Add a default level
+            AddLevel(_content);
+        }
+
+        public void AddLevel(ContentManager _content)
+        {
+            CurrentLevel = new();
+            // Only load 3D content if GraphicsDevice is available
+            try
+            {
+                CurrentLevel.LoadContent(_content);
+            }
+            catch (System.ArgumentNullException)
+            {
+                // GraphicsDevice not available (macOS ARM issue)
+                // Level is created but without 3D content
+            }
+            Levels.Add(CurrentLevel);
+        }
+
+        public void Render()
+        {
+            CurrentLevel.Render();
+        }
+
+        public void Serialize(BinaryWriter _stream)
+        {
+            _stream.Write(Levels.Count);
+            int clIndex = Levels.IndexOf(CurrentLevel);
+            foreach (var level in Levels)
+            {
+                level.Serialize(_stream);
+            }
+            _stream.Write(clIndex);
+            _stream.Write(Folder);
+            _stream.Write(Name);
+        }
+
+        public void Deserialize(BinaryReader _stream, ContentManager _content)
+        {
+            int levelCount = _stream.ReadInt32();
+            for (int count = 0; count < levelCount; count++)
+            {
+                Level l = new();
+                l.Deserialize(_stream, _content);
+                Levels.Add(l);
+            }
+            int clIndex = _stream.ReadInt32();
+            CurrentLevel = Levels[clIndex];
+            Folder = _stream.ReadString();
+            Name = _stream.ReadString();
+        }
+    }
+}
