@@ -10,10 +10,12 @@
         <!-- Menu Strip -->
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Create" Click="CreateProject_Click"/>
-                <Separator/>
-                <MenuItem Header="Save" Click="SaveGame_Click"/>
-                <MenuItem Header="Load" Click="LoadGame_Click"/>
+                <MenuItem Header="Project">
+                    <MenuItem Header="Create" Click="CreateProject_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Save" Click="SaveGame_Click"/>
+                    <MenuItem Header="Load" Click="LoadGame_Click"/>
+                </MenuItem>
                 <Separator/>
                 <MenuItem Header="Exit" Click="Exit_Click"/>
             </MenuItem>
@@ -21,12 +23,13 @@
         
         <!-- Status Strip at the very bottom -->
         <Border DockPanel.Dock="Bottom" Background="#F0F0F0" Height="22" BorderBrush="Gray" BorderThickness="0,1,0,0">
-            <TextBlock Text="Ready" Name="StatusLabel" 
+            <TextBlock Name="StatusLabel" 
                       HorizontalAlignment="Left" 
                       VerticalAlignment="Center" 
                       Margin="8,0,0,0"
                       FontSize="11"
-                      Foreground="Black"/>
+                      Foreground="Black"
+                      Text="Ready"/>
         </Border>
         
         <!-- Main Content Area -->
