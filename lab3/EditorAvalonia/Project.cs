@@ -47,12 +47,21 @@ namespace EditorAvalonia
             AddLevel(_content);
         }
 
-        public void AddLevel(ContentManager _content)
-        {
-            CurrentLevel = new();
-            CurrentLevel.LoadContent(_content);
-            Levels.Add(CurrentLevel);
-        }
+            public void AddLevel(ContentManager _content)
+            {
+                CurrentLevel = new();
+                // Only load 3D content if GraphicsDevice is available
+                try
+                {
+                    CurrentLevel.LoadContent(_content);
+                }
+                catch (System.ArgumentNullException)
+                {
+                    // GraphicsDevice not available (macOS ARM issue)
+                    // Level is created but without 3D content
+                }
+                Levels.Add(CurrentLevel);
+            }
 
         public void Render()
         {

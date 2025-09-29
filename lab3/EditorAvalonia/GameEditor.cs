@@ -75,7 +75,9 @@ namespace EditorAvalonia
         {
             if (Project == null) return;
             Camera c = Project.CurrentLevel.GetCamera();
-            c.Update(c.Position, m_graphics.GraphicsDevice.Viewport.AspectRatio);
+            // Use default aspect ratio since GraphicsDevice is not available
+            float aspectRatio = m_graphics?.GraphicsDevice?.Viewport.AspectRatio ?? 16f / 9f;
+            c.Update(c.Position, aspectRatio);
         }
         
         // Save/Load functionality (following slide requirements)

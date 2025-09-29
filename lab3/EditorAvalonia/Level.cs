@@ -35,12 +35,20 @@ namespace EditorAvalonia
         {
         }
 
-        public void LoadContent(ContentManager _content)
-        {
-            // Create a procedural teapot since we have placeholder files
-            Models teapot = CreateProceduralTeapot(_content);
-            AddModel(teapot);
-        }
+            public void LoadContent(ContentManager _content)
+            {
+                try
+                {
+                    // Create a procedural teapot since we have placeholder files
+                    Models teapot = CreateProceduralTeapot(_content);
+                    AddModel(teapot);
+                }
+                catch (System.ArgumentNullException)
+                {
+                    // GraphicsDevice not available - skip 3D content creation
+                    // Level is created but without models (for macOS ARM compatibility)
+                }
+            }
 
         private Models CreateProceduralTeapot(ContentManager _content)
         {
