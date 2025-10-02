@@ -69,3 +69,6 @@ artifacts/
 # Temporary files
 *.tmp
 *.temp
+
+# Lab 3 - Editor2025 (untracked project)
+lab3/Editor2025/
