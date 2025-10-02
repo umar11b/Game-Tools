@@ -87,11 +87,14 @@ namespace EditorImGui
             try
             {
                 _teapot = Content.Load<Model>("teapot");
+                Console.WriteLine($"✅ Teapot model loaded successfully! Meshes: {_teapot?.Meshes?.Count ?? 0}");
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"❌ Failed to load teapot model: {ex.Message}");
                 // Fallback to procedural sphere if teapot model fails to load
                 _teapot = CreateSphereModel(GraphicsDevice);
+                Console.WriteLine($"✅ Created fallback sphere model. Meshes: {_teapot?.Meshes?.Count ?? 0}");
             }
         }
 
@@ -273,7 +276,13 @@ namespace EditorImGui
 
         private void DrawTeapot()
         {
-            if (_teapot == null || _teapot.Meshes == null) return;
+            if (_teapot == null || _teapot.Meshes == null) 
+            {
+                Console.WriteLine("❌ DrawTeapot: Teapot or meshes are null");
+                return;
+            }
+            
+            // Console.WriteLine($"🎮 DrawTeapot: Drawing teapot with {_teapot.Meshes.Count} meshes");
 
             // Define the Game View panel boundaries (left 70% of window, accounting for menu bar)
             var viewport = GraphicsDevice.Viewport;
