@@ -13,6 +13,15 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Title = "Our Cool Editor";
+        
+        // Initialize the MonoGame control
+        GameViewControl.GameInitialized += OnGameViewInitialized;
+    }
+    
+    private void OnGameViewInitialized(object? sender, EventArgs e)
+    {
+        // Get the game instance from the control
+        Game = GameViewControl.Game;
     }
     
     // Event handlers (following slide example)
@@ -75,5 +84,24 @@ public partial class MainWindow : Window
     private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         Game?.AdjustAspectRatio();
+    }
+    
+    // Solar System Editor Menu Handlers
+    private void AddSun_Click(object sender, RoutedEventArgs e)
+    {
+        Game?.AddSun();
+        StatusLabel.Text = "Sun added to solar system";
+    }
+    
+    private void AddPlanet_Click(object sender, RoutedEventArgs e)
+    {
+        Game?.AddPlanet();
+        StatusLabel.Text = "Planet added to solar system";
+    }
+    
+    private void AddMoon_Click(object sender, RoutedEventArgs e)
+    {
+        Game?.AddMoon();
+        StatusLabel.Text = "Moon added to solar system";
     }
 }

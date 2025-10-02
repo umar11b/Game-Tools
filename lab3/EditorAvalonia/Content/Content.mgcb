@@ -12,7 +12,7 @@
 
 #---------------------------------- Content ----------------------------------#
 
-#begin Teapot.fbx
+#begin Moon.fbx
 /importer:FbxImporter
 /processor:FbxProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -21,9 +21,31 @@
 /processorParam:PremultiplyTextureAlpha=True
 /processorParam:SwapWindingOrder=False
 /processorParam:ResizeTexturesToPowerOfTwo=False
-/build:Teapot.fbx
+/build:Moon.fbx
 
-#begin Metal.jpg
+#begin Sun.fbx
+/importer:FbxImporter
+/processor:FbxProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:SwapWindingOrder=False
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/build:Sun.fbx
+
+#begin World.fbx
+/importer:FbxImporter
+/processor:FbxProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:SwapWindingOrder=False
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/build:World.fbx
+
+#begin MoonDiffuse.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -33,7 +55,31 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Compressed
-/build:Metal.jpg
+/build:MoonDiffuse.jpg
+
+#begin SunDiffuse.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=True
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Compressed
+/build:SunDiffuse.jpg
+
+#begin WorldDiffuse.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=True
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Compressed
+/build:WorldDiffuse.jpg
 
 #begin MyShader.fx
 /importer:EffectImporter

@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="using:EditorAvalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EditorAvalonia.MainWindow"
         Title="Our Cool Editor">
@@ -18,6 +19,11 @@
                 </MenuItem>
                 <Separator/>
                 <MenuItem Header="Exit" Click="Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Controls">
+                <MenuItem Header="Add Sun" Click="AddSun_Click"/>
+                <MenuItem Header="Add Planet" Click="AddPlanet_Click"/>
+                <MenuItem Header="Add Moon" Click="AddMoon_Click"/>
             </MenuItem>
         </Menu>
         
@@ -42,12 +48,7 @@
             
             <!-- Game View Panel -->
             <Border Grid.Column="0" Background="CornflowerBlue" Margin="0" SizeChanged="Panel1_SizeChanged">
-                <TextBlock Text="Game View" 
-                          HorizontalAlignment="Center" 
-                          VerticalAlignment="Center"
-                          Foreground="White"
-                          FontSize="18"
-                          FontWeight="Bold"/>
+                <local:MonoGameControl Name="GameViewControl" />
             </Border>
             
             <!-- Splitter -->
