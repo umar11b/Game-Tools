@@ -15,6 +15,7 @@ namespace SolarSystemEditor
         private bool isInitialized = false;
         
         public GameEditor? Game => game;
+        public SimpleSolarSystemRenderer? SimpleRenderer => simpleRenderer;
         public event EventHandler? GameInitialized;
         
         [DllImport("kernel32.dll")]
@@ -58,6 +59,8 @@ namespace SolarSystemEditor
             }
         }
         
+        private SimpleSolarSystemRenderer? simpleRenderer;
+        
         private void InitializeMonoGame()
         {
             try
@@ -78,9 +81,13 @@ namespace SolarSystemEditor
             {
                 Console.WriteLine($"Error initializing MonoGame: {ex.Message}");
                 Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
+                Console.WriteLine("Falling back to simple renderer for Azure VM compatibility");
                 
-                // Create fallback
-                game = new GameEditor();
+                // Create simple renderer fallback for Azure VMs
+                simpleRenderer = new SimpleSolarSystemRenderer();
+                this.Controls.Add(simpleRenderer);
+                
+                // Fire the initialized event
                 GameInitialized?.Invoke(this, EventArgs.Empty);
             }
         }

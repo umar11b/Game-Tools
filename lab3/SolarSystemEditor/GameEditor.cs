@@ -63,11 +63,16 @@ namespace SolarSystemEditor
             this.windowWidth = width;
             this.windowHeight = height;
             
-            // Configure graphics for WinForms control
+            // Configure graphics for WinForms control with VM compatibility
             graphics.PreferredBackBufferWidth = width;
             graphics.PreferredBackBufferHeight = height;
             graphics.IsFullScreen = false;
             graphics.HardwareModeSwitch = false;
+            
+            // VM-friendly graphics settings
+            graphics.GraphicsProfile = GraphicsProfile.Reach; // Use Reach profile for better compatibility
+            graphics.PreferMultiSampling = false; // Disable anti-aliasing for VM compatibility
+            graphics.SynchronizeWithVerticalRetrace = false; // Disable VSync for VM compatibility
             
             // Set the window handle for rendering
             SetWindowHandle(windowHandle);

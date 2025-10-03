@@ -166,8 +166,16 @@ namespace SolarSystemEditor
         /// </summary>
         private void AddSun_Click(object? sender, EventArgs e)
         {
-            game?.AddSun();
-            UpdateStatus("Sun added to solar system");
+            if (game != null)
+            {
+                game.AddSun();
+                UpdateStatus("Sun added to solar system (MonoGame)");
+            }
+            else if (gameControl?.SimpleRenderer != null)
+            {
+                gameControl.SimpleRenderer.AddSun();
+                UpdateStatus("Sun added to solar system (Simple Renderer)");
+            }
         }
         
         /// <summary>
@@ -175,8 +183,16 @@ namespace SolarSystemEditor
         /// </summary>
         private void AddPlanet_Click(object? sender, EventArgs e)
         {
-            game?.AddPlanet();
-            UpdateStatus("Planet added to solar system");
+            if (game != null)
+            {
+                game.AddPlanet();
+                UpdateStatus("Planet added to solar system (MonoGame)");
+            }
+            else if (gameControl?.SimpleRenderer != null)
+            {
+                gameControl.SimpleRenderer.AddPlanet();
+                UpdateStatus("Planet added to solar system (Simple Renderer)");
+            }
         }
         
         /// <summary>
@@ -184,8 +200,16 @@ namespace SolarSystemEditor
         /// </summary>
         private void AddMoon_Click(object? sender, EventArgs e)
         {
-            game?.AddMoon();
-            UpdateStatus("Moons added to solar system");
+            if (game != null)
+            {
+                game.AddMoon();
+                UpdateStatus("Moons added to solar system (MonoGame)");
+            }
+            else if (gameControl?.SimpleRenderer != null)
+            {
+                gameControl.SimpleRenderer.AddMoon();
+                UpdateStatus("Moons added to solar system (Simple Renderer)");
+            }
         }
         
         private void OnGameInitialized(object? sender, EventArgs e)
