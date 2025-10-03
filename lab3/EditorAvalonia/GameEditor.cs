@@ -30,6 +30,10 @@ namespace EditorAvalonia
         private MainWindow? m_parent;
         
         // Solar System Editor
+        public List<SolarSystemObject> SolarSystemObjects => solarSystemObjects;
+        public Model? SunModel => sunModel;
+        public Model? PlanetModel => planetModel;
+        public Model? MoonModel => moonModel;
         private List<SolarSystemObject> solarSystemObjects;
         private SolarSystemObject? sun;
         private List<SolarSystemObject> planets;
@@ -146,9 +150,10 @@ namespace EditorAvalonia
         // Solar System Editor Methods
         public void AddSun()
         {
-            if (sun == null && sunModel != null && sunTexture != null)
+            if (sun == null)
             {
-                sun = new SolarSystemObject(SolarSystemObjectType.Sun, sunModel, sunTexture)
+                // Create sun without 3D model (GraphicsDevice issue on macOS)
+                sun = new SolarSystemObject(SolarSystemObjectType.Sun, null, null)
                 {
                     Position = Vector3.Zero,
                     Scale = new Vector3(2f),
@@ -161,9 +166,10 @@ namespace EditorAvalonia
         
         public void AddPlanet()
         {
-            if (planets.Count < 5 && planetModel != null && planetTexture != null)
+            if (planets.Count < 5)
             {
-                var planet = new SolarSystemObject(SolarSystemObjectType.Planet, planetModel, planetTexture)
+                // Create planet without 3D model (GraphicsDevice issue on macOS)
+                var planet = new SolarSystemObject(SolarSystemObjectType.Planet, null, null)
                 {
                     Position = new Vector3(
                         random.Next(-150, 151),
@@ -184,30 +190,175 @@ namespace EditorAvalonia
         
         public void AddMoon()
         {
-            if (moonModel != null && moonTexture != null)
+            foreach (var planet in planets)
             {
-                foreach (var planet in planets)
+                // Create moon without 3D model (GraphicsDevice issue on macOS)
+                var moon = new SolarSystemObject(SolarSystemObjectType.Moon, null, null)
                 {
-                    var moon = new SolarSystemObject(SolarSystemObjectType.Moon, moonModel, moonTexture)
-                    {
-                        Position = new Vector3(
-                            planet.Position.X + 20,
-                            planet.Position.Y,
-                            planet.Position.Z
-                        ),
-                        Scale = new Vector3((float)(random.NextDouble() * 0.2 + 0.2)), // 0.2 to 0.4
-                        RotationSpeed = (float)(random.NextDouble() * 0.005 + 0.005), // 0.005 to 0.01
-                        OrbitSpeed = (float)(random.NextDouble() * 0.01 + 0.01), // 0.01 to 0.02
-                        Parent = planet
-                    };
-                    moon.OriginalPosition = moon.Position;
-                    moons.Add(moon);
-                    solarSystemObjects.Add(moon);
-                }
-                Console.WriteLine($"Moons added for all {planets.Count} planets");
+                    Position = new Vector3(
+                        planet.Position.X + 20,
+                        planet.Position.Y,
+                        planet.Position.Z
+                    ),
+                    Scale = new Vector3((float)(random.NextDouble() * 0.2 + 0.2)), // 0.2 to 0.4
+                    RotationSpeed = (float)(random.NextDouble() * 0.005 + 0.005), // 0.005 to 0.01
+                    OrbitSpeed = (float)(random.NextDouble() * 0.01 + 0.01), // 0.01 to 0.02
+                    Parent = planet
+                };
+                moon.OriginalPosition = moon.Position;
+                moons.Add(moon);
+                solarSystemObjects.Add(moon);
             }
+            Console.WriteLine($"Moons added for all {planets.Count} planets");
         }
         
+        private Model CreateSphereModel(Color color, float radius)
+        {
+            // Create a simple sphere using built-in geometry
+            var vertices = new List<VertexPositionColorTexture>();
+            var indices = new List<int>();
+            
+            int segments = 16;
+            int rings = 16;
+            
+            for (int ring = 0; ring <= rings; ring++)
+            {
+                float v = (float)ring / rings;
+                float phi = v * MathHelper.Pi;
+                
+                for (int segment = 0; segment <= segments; segment++)
+                {
+                    float u = (float)segment / segments;
+                    float theta = u * MathHelper.TwoPi;
+                    
+                    float x = (float)(Math.Cos(theta) * Math.Sin(phi)) * radius;
+                    float y = (float)Math.Cos(phi) * radius;
+                    float z = (float)(Math.Sin(theta) * Math.Sin(phi)) * radius;
+                    
+                    vertices.Add(new VertexPositionColorTexture(
+                        new Vector3(x, y, z),
+                        color,
+                        new Vector2(u, v)
+                    ));
+                }
+            }
+            
+            for (int ring = 0; ring < rings; ring++)
+            {
+                for (int segment = 0; segment < segments; segment++)
+                {
+                    int current = ring * (segments + 1) + segment;
+                    int next = current + segments + 1;
+                    
+                    indices.Add(current);
+                    indices.Add(next);
+                    indices.Add(current + 1);
+                    
+                    indices.Add(current + 1);
+                    indices.Add(next);
+                    indices.Add(next + 1);
+                }
+            }
+            
+            var vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColorTexture), vertices.Count, BufferUsage.WriteOnly);
+            vertexBuffer.SetData(vertices.ToArray());
+            
+            var indexBuffer = new IndexBuffer(GraphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Count, BufferUsage.WriteOnly);
+            indexBuffer.SetData(indices.ToArray());
+            
+            var meshParts = new List<ModelMeshPart>();
+            var meshPart = new ModelMeshPart();
+            meshPart.VertexBuffer = vertexBuffer;
+            meshPart.IndexBuffer = indexBuffer;
+            meshPart.PrimitiveCount = indices.Count / 3;
+            meshParts.Add(meshPart);
+            
+            var meshes = new List<ModelMesh>();
+            var mesh = new ModelMesh(GraphicsDevice, meshParts);
+            meshes.Add(mesh);
+            
+            var bones = new List<ModelBone>();
+            return new Model(GraphicsDevice, bones, meshes);
+        }
+        
+        private Texture2D CreateSunTexture()
+        {
+            var texture = new Texture2D(GraphicsDevice, 64, 64);
+            var colors = new Color[64 * 64];
+            
+            for (int y = 0; y < 64; y++)
+            {
+                for (int x = 0; x < 64; x++)
+                {
+                    // Create sun-like texture
+                    float distance = Vector2.Distance(new Vector2(x, y), new Vector2(32, 32)) / 32f;
+                    if (distance <= 1.0f)
+                    {
+                        colors[y * 64 + x] = Color.Lerp(Color.White, Color.Orange, distance);
+                    }
+                    else
+                    {
+                        colors[y * 64 + x] = Color.Transparent;
+                    }
+                }
+            }
+            
+            texture.SetData(colors);
+            return texture;
+        }
+        
+        private Texture2D CreatePlanetTexture()
+        {
+            var texture = new Texture2D(GraphicsDevice, 64, 64);
+            var colors = new Color[64 * 64];
+            
+            for (int y = 0; y < 64; y++)
+            {
+                for (int x = 0; x < 64; x++)
+                {
+                    // Create planet-like texture
+                    float distance = Vector2.Distance(new Vector2(x, y), new Vector2(32, 32)) / 32f;
+                    if (distance <= 1.0f)
+                    {
+                        colors[y * 64 + x] = Color.Lerp(Color.LightBlue, Color.Blue, distance);
+                    }
+                    else
+                    {
+                        colors[y * 64 + x] = Color.Transparent;
+                    }
+                }
+            }
+            
+            texture.SetData(colors);
+            return texture;
+        }
+        
+        private Texture2D CreateMoonTexture()
+        {
+            var texture = new Texture2D(GraphicsDevice, 64, 64);
+            var colors = new Color[64 * 64];
+            
+            for (int y = 0; y < 64; y++)
+            {
+                for (int x = 0; x < 64; x++)
+                {
+                    // Create moon-like texture
+                    float distance = Vector2.Distance(new Vector2(x, y), new Vector2(32, 32)) / 32f;
+                    if (distance <= 1.0f)
+                    {
+                        colors[y * 64 + x] = Color.Lerp(Color.LightGray, Color.Gray, distance);
+                    }
+                    else
+                    {
+                        colors[y * 64 + x] = Color.Transparent;
+                    }
+                }
+            }
+            
+            texture.SetData(colors);
+            return texture;
+        }
+
         private void RenderSolarSystemObject(SolarSystemObject obj, Matrix view, Matrix projection)
         {
             if (obj.Model == null) return;
