@@ -40,6 +40,7 @@ namespace SolarSystemEditor
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            Window.Title = "Solar System Editor - 3D View";
             
             // Initialize collections
             solarSystemObjects = new List<SolarSystemObject>();
@@ -47,9 +48,9 @@ namespace SolarSystemEditor
             moons = new List<SolarSystemObject>();
             random = new Random();
             
-            // Set up graphics for WinForms integration
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 600;
+            // Set up graphics for standalone window
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
         }
         

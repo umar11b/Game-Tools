@@ -5,8 +5,9 @@ namespace SolarSystemEditor
 {
     public partial class MainForm : Form
     {
-        private GameControl gameControl;
+        private GameControl gameControl = null!;
         private GameEditor? game;
+        private SplitContainer splitContainer = null!;
         
         public MainForm()
         {
@@ -65,12 +66,14 @@ namespace SolarSystemEditor
             statusStrip.Items.Add(statusLabel);
             
             // Create Split Container for main layout
-            SplitContainer splitContainer = new SplitContainer();
+            splitContainer = new SplitContainer();
             splitContainer.Dock = DockStyle.Fill;
             splitContainer.SplitterDistance = 800; // Game view gets more space
             splitContainer.SplitterWidth = 3;
-            splitContainer.Panel1.BackColor = System.Drawing.Color.CornflowerBlue;
+            splitContainer.Panel1.BackColor = System.Drawing.Color.DarkBlue;
             splitContainer.Panel2.BackColor = System.Drawing.Color.LightGray;
+            
+            // GameControl will be added here in InitializeGameControl
             
             // Add controls to form
             this.Controls.Add(splitContainer);
@@ -84,17 +87,21 @@ namespace SolarSystemEditor
         
         private void InitializeGameControl()
         {
-            gameControl = new GameControl();
-            gameControl.Dock = DockStyle.Fill;
-            gameControl.GameInitialized += OnGameInitialized;
-            
-            // Add to the left panel of split container
-            ((SplitContainer)this.Controls[0]).Panel1.Controls.Add(gameControl);
-        }
-        
-        private void OnGameInitialized(object sender, EventArgs e)
-        {
-            game = gameControl.Game;
+            try
+            {
+                // Create GameControl
+                gameControl = new GameControl();
+                gameControl.GameInitialized += OnGameInitialized;
+                
+                // Add to the split container panel
+                splitContainer.Panel1.Controls.Add(gameControl);
+                
+                Console.WriteLine("GameControl created and added to form");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating GameControl: {ex.Message}");
+            }
         }
         
         // Menu Event Handlers
@@ -102,7 +109,7 @@ namespace SolarSystemEditor
         /// <summary>
         /// File > New - Creates a new solar system project
         /// </summary>
-        private void NewProject_Click(object sender, EventArgs e)
+        private void NewProject_Click(object? sender, EventArgs e)
         {
             // Clear existing solar system
             game?.ClearSolarSystem();
@@ -112,7 +119,7 @@ namespace SolarSystemEditor
         /// <summary>
         /// File > Open - Opens an existing solar system project
         /// </summary>
-        private void OpenProject_Click(object sender, EventArgs e)
+        private void OpenProject_Click(object? sender, EventArgs e)
         {
             OpenFileDialog openDialog = new OpenFileDialog();
             openDialog.Title = "Open Solar System Project";
@@ -128,7 +135,7 @@ namespace SolarSystemEditor
         /// <summary>
         /// File > Save - Saves the current solar system project
         /// </summary>
-        private void SaveGame_Click(object sender, EventArgs e)
+        private void SaveGame_Click(object? sender, EventArgs e)
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.Title = "Save Solar System Project";
@@ -145,16 +152,19 @@ namespace SolarSystemEditor
         /// <summary>
         /// File > Exit - Exits the application
         /// </summary>
-        private void Exit_Click(object sender, EventArgs e)
+        private void Exit_Click(object? sender, EventArgs e)
         {
+            // Clean up MonoGame
             game?.Exit();
+            game = null;
+
             this.Close();
         }
         
         /// <summary>
         /// Controls > Add Sun - Adds a sun to the solar system
         /// </summary>
-        private void AddSun_Click(object sender, EventArgs e)
+        private void AddSun_Click(object? sender, EventArgs e)
         {
             game?.AddSun();
             UpdateStatus("Sun added to solar system");
@@ -163,7 +173,7 @@ namespace SolarSystemEditor
         /// <summary>
         /// Controls > Add Planet - Adds a planet to the solar system
         /// </summary>
-        private void AddPlanet_Click(object sender, EventArgs e)
+        private void AddPlanet_Click(object? sender, EventArgs e)
         {
             game?.AddPlanet();
             UpdateStatus("Planet added to solar system");
@@ -172,10 +182,25 @@ namespace SolarSystemEditor
         /// <summary>
         /// Controls > Add Moon - Adds moons for each planet
         /// </summary>
-        private void AddMoon_Click(object sender, EventArgs e)
+        private void AddMoon_Click(object? sender, EventArgs e)
         {
             game?.AddMoon();
             UpdateStatus("Moons added to solar system");
+        }
+        
+        private void OnGameInitialized(object? sender, EventArgs e)
+        {
+            game = gameControl?.Game;
+            if (game != null)
+            {
+                UpdateStatus("MonoGame Ready - Use menu to add celestial bodies");
+                Console.WriteLine("Game initialized and ready for commands");
+            }
+            else
+            {
+                UpdateStatus("MonoGame Error - Check console for details");
+                Console.WriteLine("Game initialization failed");
+            }
         }
         
         private void UpdateStatus(string message)
