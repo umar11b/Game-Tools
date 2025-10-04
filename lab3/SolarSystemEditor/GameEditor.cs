@@ -28,6 +28,12 @@ namespace SolarSystemEditor
         private Texture2D? sunTexture, planetTexture, moonTexture;
         private Effect? myShader;
         
+        // Simple 3D geometry for Azure VM compatibility
+        private VertexBuffer? sphereVertexBuffer;
+        private IndexBuffer? sphereIndexBuffer;
+        private BasicEffect? basicEffect;
+        private int sphereVertexCount;
+        
         // Random number generator for procedural generation
         private Random random;
         
@@ -48,9 +54,17 @@ namespace SolarSystemEditor
             moons = new List<SolarSystemObject>();
             random = new Random();
             
-            // Set up graphics for standalone window
+            // Set up graphics for standalone window with Azure VM compatibility
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
+            
+            // Azure VM-friendly graphics settings
+            graphics.GraphicsProfile = GraphicsProfile.Reach; // Use Reach profile for better compatibility
+            graphics.PreferMultiSampling = false; // Disable anti-aliasing
+            graphics.SynchronizeWithVerticalRetrace = false; // Disable VSync
+            graphics.IsFullScreen = false;
+            graphics.HardwareModeSwitch = false;
+            
             graphics.ApplyChanges();
         }
         
@@ -127,8 +141,81 @@ namespace SolarSystemEditor
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading solar system content: {ex.Message}");
-                Console.WriteLine("Some content may not be available. Check the Content folder.");
+                Console.WriteLine("Creating simple 3D geometry for Azure VM compatibility");
+                
+                // Create simple 3D geometry as fallback
+                CreateSimpleSphereGeometry();
             }
+            
+            // Set up basic effect for simple rendering
+            basicEffect = new BasicEffect(GraphicsDevice);
+            basicEffect.VertexColorEnabled = true;
+            basicEffect.LightingEnabled = true;
+            basicEffect.AmbientLightColor = new Vector3(0.3f, 0.3f, 0.3f);
+            basicEffect.DirectionalLight0.Enabled = true;
+            basicEffect.DirectionalLight0.Direction = new Vector3(-1, -1, -1);
+            basicEffect.DirectionalLight0.DiffuseColor = new Vector3(0.7f, 0.7f, 0.7f);
+        }
+        
+        private void CreateSimpleSphereGeometry()
+        {
+            // Create a simple sphere using basic geometry
+            int segments = 16;
+            int rings = 16;
+            
+            List<VertexPositionColor> vertices = new List<VertexPositionColor>();
+            List<int> indices = new List<int>();
+            
+            // Generate sphere vertices
+            for (int ring = 0; ring <= rings; ring++)
+            {
+                float phi = (float)(Math.PI * ring / rings);
+                for (int segment = 0; segment <= segments; segment++)
+                {
+                    float theta = (float)(2.0 * Math.PI * segment / segments);
+                    
+                    Vector3 position = new Vector3(
+                        (float)(Math.Sin(phi) * Math.Cos(theta)),
+                        (float)(Math.Cos(phi)),
+                        (float)(Math.Sin(phi) * Math.Sin(theta))
+                    );
+                    
+                    Color color = Color.White;
+                    vertices.Add(new VertexPositionColor(position, color));
+                }
+            }
+            
+            // Generate sphere indices
+            for (int ring = 0; ring < rings; ring++)
+            {
+                for (int segment = 0; segment < segments; segment++)
+                {
+                    int current = ring * (segments + 1) + segment;
+                    int next = current + segments + 1;
+                    
+                    // First triangle
+                    indices.Add(current);
+                    indices.Add(next);
+                    indices.Add(current + 1);
+                    
+                    // Second triangle
+                    indices.Add(current + 1);
+                    indices.Add(next);
+                    indices.Add(next + 1);
+                }
+            }
+            
+            // Create vertex buffer
+            sphereVertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), vertices.Count, BufferUsage.WriteOnly);
+            sphereVertexBuffer.SetData(vertices.ToArray());
+            
+            // Create index buffer
+            sphereIndexBuffer = new IndexBuffer(GraphicsDevice, typeof(int), indices.Count, BufferUsage.WriteOnly);
+            sphereIndexBuffer.SetData(indices.ToArray());
+            
+            sphereVertexCount = indices.Count;
+            
+            Console.WriteLine($"Created simple sphere geometry with {vertices.Count} vertices and {indices.Count} indices");
         }
 
         protected override void Update(GameTime gameTime)
@@ -193,7 +280,7 @@ namespace SolarSystemEditor
         /// </summary>
         public void AddSun()
         {
-            if (sun == null && sunModel != null && sunTexture != null)
+            if (sun == null)
             {
                 sun = new SolarSystemObject(SolarSystemObjectType.Sun, sunModel, sunTexture)
                 {
@@ -213,7 +300,7 @@ namespace SolarSystemEditor
         /// </summary>
         public void AddPlanet()
         {
-            if (planets.Count < 5 && planetModel != null && planetTexture != null)
+            if (planets.Count < 5)
             {
                 var planet = new SolarSystemObject(SolarSystemObjectType.Planet, planetModel, planetTexture)
                 {
@@ -241,7 +328,7 @@ namespace SolarSystemEditor
         /// </summary>
         public void AddMoon()
         {
-            if (moonModel != null && moonTexture != null)
+            if (planets.Count > 0) // Need at least one planet to add moons
             {
                 foreach (var planet in planets)
                 {
@@ -279,24 +366,67 @@ namespace SolarSystemEditor
         
         private void RenderSolarSystemObject(SolarSystemObject obj, Matrix view, Matrix projection)
         {
-            if (obj.Model == null) return;
-            
             var world = obj.GetWorldMatrix();
             
-            foreach (ModelMesh mesh in obj.Model.Meshes)
+            // Try to render with loaded model first
+            if (obj.Model != null)
             {
-                foreach (ModelMeshPart part in mesh.MeshParts)
+                foreach (ModelMesh mesh in obj.Model.Meshes)
                 {
-                    if (myShader != null)
+                    foreach (ModelMeshPart part in mesh.MeshParts)
                     {
-                        myShader.Parameters["World"].SetValue(world);
-                        myShader.Parameters["View"].SetValue(view);
-                        myShader.Parameters["Projection"].SetValue(projection);
-                        myShader.Parameters["Texture"].SetValue(obj.Texture);
-                        part.Effect = myShader;
+                        if (myShader != null)
+                        {
+                            myShader.Parameters["World"].SetValue(world);
+                            myShader.Parameters["View"].SetValue(view);
+                            myShader.Parameters["Projection"].SetValue(projection);
+                            myShader.Parameters["Texture"].SetValue(obj.Texture);
+                            part.Effect = myShader;
+                        }
                     }
+                    mesh.Draw();
                 }
-                mesh.Draw();
+            }
+            // Fallback to simple sphere geometry for Azure VM compatibility
+            else if (sphereVertexBuffer != null && sphereIndexBuffer != null && basicEffect != null)
+            {
+                RenderSimpleSphere(obj, world, view, projection);
+            }
+        }
+        
+        private void RenderSimpleSphere(SolarSystemObject obj, Matrix world, Matrix view, Matrix projection)
+        {
+            // Set up basic effect
+            basicEffect.World = world;
+            basicEffect.View = view;
+            basicEffect.Projection = projection;
+            
+            // Set color based on object type
+            Color color = Color.White;
+            switch (obj.Type)
+            {
+                case SolarSystemObjectType.Sun:
+                    color = Color.Yellow;
+                    break;
+                case SolarSystemObjectType.Planet:
+                    color = Color.Blue;
+                    break;
+                case SolarSystemObjectType.Moon:
+                    color = Color.LightGray;
+                    break;
+            }
+            
+            basicEffect.DiffuseColor = color.ToVector3();
+            
+            // Set vertex buffer and index buffer
+            GraphicsDevice.SetVertexBuffer(sphereVertexBuffer);
+            GraphicsDevice.Indices = sphereIndexBuffer;
+            
+            // Draw the sphere
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, sphereVertexCount / 3);
             }
         }
 
