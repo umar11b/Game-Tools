@@ -55,15 +55,24 @@ namespace EditorImGui
 
         protected override void Initialize()
         {
-            // Initialize ImGui
+            // Initialize ImGui with better error handling
             try
             {
                 _imGuiRenderer = new ImGuiRenderer(this);
+                
+                // Configure ImGui for macOS compatibility
+                var io = ImGui.GetIO();
+                io.ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
+                io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+                
+                // Force font atlas rebuild
                 _imGuiRenderer.RebuildFontAtlas();
+                
+                Console.WriteLine("ImGui initialized successfully");
             }
-            catch
+            catch (Exception ex)
             {
-                // If ImGui fails to initialize, we'll continue without it
+                Console.WriteLine($"ImGui initialization failed: {ex.Message}");
                 _imGuiRenderer = null;
             }
 

@@ -14,6 +14,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ImGuiNET;
+using System;
 
 namespace EditorImGui
 {
@@ -31,13 +32,25 @@ namespace EditorImGui
             // Simple font atlas rebuild - ImGui.NET handles this internally
             try
             {
-                ImGui.GetIO().Fonts.Clear();
-                ImGui.GetIO().Fonts.AddFontDefault();
-                ImGui.GetIO().Fonts.Build();
+                var io = ImGui.GetIO();
+                io.Fonts.Clear();
+                io.Fonts.AddFontDefault();
+                io.Fonts.Build();
+                Console.WriteLine("Font atlas built successfully");
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore font errors for now
+                Console.WriteLine($"Font atlas error: {ex.Message}");
+                // Try fallback approach
+                try
+                {
+                    var io = ImGui.GetIO();
+                    io.Fonts.AddFontDefault();
+                }
+                catch
+                {
+                    Console.WriteLine("Fallback font loading also failed");
+                }
             }
         }
 

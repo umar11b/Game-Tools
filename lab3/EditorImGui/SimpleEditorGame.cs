@@ -49,13 +49,13 @@ namespace EditorImGui
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            _graphics.PreferredBackBufferWidth = 1200;
-            _graphics.PreferredBackBufferHeight = 800;
-            Window.Title = "Our Cool Editor - Simple Version";
+            // Don't set custom window size - let it use defaults like Editor2025
         }
 
         protected override void Initialize()
         {
+            Console.WriteLine("🚀 SimpleEditorGame Initializing...");
+            
             // Initialize matrices exactly like Editor2025
             _world = Matrix.CreateTranslation(new Vector3(0, 0, 0));
             _view = Matrix.CreateLookAt(new Vector3(0, 0, 2), new Vector3(0, 0, 0), Vector3.Up);
@@ -64,13 +64,24 @@ namespace EditorImGui
                 16f / 9f, // Use default aspect ratio instead of GraphicsDevice.Viewport
                 0.1f, 
                 100f);
+                
+            Console.WriteLine("✅ Matrices initialized");
+            Console.WriteLine($"📱 Window size: {_graphics.PreferredBackBufferWidth}x{_graphics.PreferredBackBufferHeight}");
+            Console.WriteLine($"🪟 Window title: {Window.Title}");
+            
+            // Apply graphics changes
+            _graphics.ApplyChanges();
+            Console.WriteLine("✅ Graphics changes applied");
 
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
+            Console.WriteLine("📦 Loading content...");
+            
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            Console.WriteLine("✅ SpriteBatch created");
             
             // Load a simple font (we'll create one if needed)
             try
@@ -229,6 +240,14 @@ namespace EditorImGui
 
         protected override void Update(GameTime gameTime)
         {
+            // Debug output once per second
+            if (gameTime.TotalGameTime.TotalSeconds < 2 && gameTime.TotalGameTime.TotalSeconds > 1)
+            {
+                Console.WriteLine("🔄 Game Update Loop Running...");
+                Console.WriteLine($"📊 Window Title: {Window?.Title}");
+                Console.WriteLine($"🎮 GraphicsDevice: {GraphicsDevice?.IsDisposed == false}");
+            }
+            
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
