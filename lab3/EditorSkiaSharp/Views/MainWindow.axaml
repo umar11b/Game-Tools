@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:EditorSkiaSharp.ViewModels"
+        xmlns:local="using:EditorSkiaSharp.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="EditorSkiaSharp.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="EditorSkiaSharp - 3D Solar System Editor">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Menu Bar -->
+        <Menu Grid.Row="0">
+            <MenuItem Header="Controls">
+                <MenuItem Header="Add Sun" Click="AddSun_Click"/>
+                <MenuItem Header="Add Planet" Click="AddPlanet_Click"/>
+                <MenuItem Header="Add Moon" Click="AddMoon_Click"/>
+                <Separator/>
+                <MenuItem Header="Toggle Teapot" Click="ToggleTeapot_Click"/>
+            </MenuItem>
+        </Menu>
+        
+        <!-- 3D View -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- 3D Scene View -->
+            <local:SolarSystemControl 
+                Grid.Column="0"
+                Background="Black"
+                x:Name="SceneView"/>
+            
+            <!-- Properties Panel -->
+            <Border Grid.Column="1" Background="LightGray" Padding="10">
+                <StackPanel>
+                    <TextBlock Text="Properties" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <TextBlock Text="Solar System Editor" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="StatusLabel" Text="Ready" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+        
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="LightBlue" Padding="5">
+            <TextBlock x:Name="StatusText" Text="3D Solar System Editor - Avalonia + SharpEngine"/>
+        </Border>
+    </Grid>
+
+</Window>
