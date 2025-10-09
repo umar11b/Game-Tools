@@ -1,16 +1,14 @@
+/*
+ * Program - Entry point for Solar System Editor
+ */
+
 using System;
 using System.Windows.Forms;
 
-namespace SolarSystemEditor
+namespace EditorRestart
 {
-    /// <summary>
-    /// Main entry point for the Solar System Editor application
-    /// </summary>
-    internal static class Program
+    static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
